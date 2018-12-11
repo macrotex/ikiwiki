@@ -1,0 +1,56 @@
+body
+{
+    border-top: 9px solid #0B5345;
+    margin: 0px;
+    padding: 0px;
+}
+
+h1, h2, h3, h4, h5
+{
+  font-family: sans-serif;
+  color: #0B5345;
+  font-weight: bold;
+}
+
+h1 { font-size: 1.4em; }
+h2 { font-size: 1.2em; }
+h3 { font-size: 1.2em; font-weight: normal; font-style: italic; }
+h4 { font-size: 1em; }
+h5 { font-size: 1em; font-weight: normal; font-style: italic; }
+
+#content  { margin: 10px; background: #fff; }
+
+.header
+{
+    font-family: sans-serif;
+    color: #0B5345;;
+    font-size: 1.4em;
+    padding: 12px 10px 12px 10px;
+    font-weight: normal;
+}
+.header a
+{
+    margin-right: 10px;
+}
+
+.actions
+{
+    display: none;
+}
+
+.pageheader .actions ul { border-bottom: 0px; }
+
+table
+{
+  border-collapse:collapse;
+}
+
+th,td
+{
+  border-style: solid ;
+  border-width: thin ;
+  padding: 2pt ;
+}
+
+#pageinfo { border: 0px; margin: 0px; padding: 0px; }
+.pagedate { margin: 0px; padding: 10px; background: #e4fbf7;
