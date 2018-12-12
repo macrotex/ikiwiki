@@ -1,5 +1,7 @@
 # Lambda For Containers
 
+UNDER CONSTRUCTION
+
 ## Introduction
 
 The [AWS Lambda service](https://aws.amazon.com/lambda/) allows the
@@ -29,34 +31,143 @@ deploy an ikiwiki web page.
      --> GitHub webhook makes call to AWS API Gateway
      --> AWS API Gateway makes a call to an AWS Lambda function
      --> The AWS Lambda function triggers a Task in AWS ECS Fargate
-     --> The task in AWS ECS Fargate runs a container that pulls the
+     --> AWS ECS Fargate pulls down a Docker Hub container
+     --> The task in AWS ECS Fargate runs the container that pulls the
          Git repository from GitHub and runs it through ikwiki and writes
          the output to AWS S3
      --> AWS S3 serves the content as static web content
 
-We are using the following AWS services:
+We are using the following services:
 
     API Gateway
-    Lambda
-    ECS
-    S3
-    IAM (allows the various services to interact)
+    AWS Lambda
+    AWS Elastic Container Service
+    AWS S3
+    AWS IAM (allows the various services to interact)
+    GitHub
+    Docker Hub
 
 ## Putting it all together
 
-### The S3 bucket
+### Step 0. AWS Prerequistes
+
+We assume that you have already created a VPC, a subnet in that VPC, and
+given that subnet a route to the outside internet via an Internet Gateway
+(or some other mechanism). You will need to these when setting up the ECS
+task.
+
+
+### Step 1. Create the S3 bucket
 
 The ikiwiki content is all static web pages, so we can serve it via an S3
 bucket. Note that this means that the content is publically viewable and
-uses http, an unencrypted transport.
+can only use http, an unencrypted transport.
+
+1. Create a new bucket `ikiwiki`.
+
+1. Configure the bucket so that it will serve its content as a static web
+site. I will discuss a few important points on this step, but for details
+on how to do this see the [AWS document Example: Setting up a Static
+Website](https://docs.aws.amazon.com/AmazonS3/latest/dev/HostingWebsiteOnS3Setup.html).
+
+1. **Gotcha**: When setting up an S3 bucket as a static web site, the
+official AWS instructions do not mention that before adding a Bucket
+Policy you must first enable the option to add bucket policies in the
+"Public access settings" for the bucket.
+
+1. **Gotcha**: In order to make your site publically accessible, you also
+have to UNcheck the "Block public and cross-account access if bucket has
+public policies" in "Public access settings".
+
+### Step 2. Create IAM role allowing access to S3 bucket
+
+We need an IAM role that we can assign to the container that llows the
+container to copy the ikiwiki output to the `ikiwiki` S3 bucket.
+
+1. Go to the IAM page.
+
+1. Create a new policy that allows listing, reading, and writing of the
+`ikiwiki` bucket. We will call this policy
+`CustomAccessToIkiwikiS3Bucket`.
+
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "VisualEditor0",
+                "Effect": "Allow",
+                "Action": "s3:ListBucket",
+                "Resource": "arn:aws:s3:::ikiwiki"
+            },
+            {
+                "Sid": "VisualEditor1",
+                "Effect": "Allow",
+                "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject",
+                    "s3:DeleteObject"
+                ],
+                "Resource": [
+                    "arn:aws:s3:::ikiwiki-testing/*",
+                    "arn:aws:s3:::ikiwiki/*"
+                ]
+            }
+        ]
+    }
+
+1. Create a role that we can assign to our ECS Tasks so they can access the S3 buckets.
+
+1. Click the "Create role" button
+
+1. Click on the "AWS service" rectangle.
+
+1. Under "Choose the service that will use this role" and click
+on the "Elastic Container Service".
+
+1. Under "Select your use case" choose "Elastic Container Service Task".
+
+1. Click the "Next: Permissions" button.
+
+1. Choose the `CustomAccessToIkiwikiS3Bucket` policy created above.
+
+1. Click the "Next: Tags" and then click "Next: Review".
+
+1. For "Role name" type in "roleECSAccessIkiwikiS3".
+
+1. Click "Create role".
+
+### Step 3. Setup the ECS cluster and task
+
+We next set up the ECS cluster and a task that will run the container for
+us.  Our container lives in the public part of Docker Hub; if you don't
+want your contianer to be public you can put your container in the AWS
+Elastic Container Registry.
+
+1. Create a cluster in ECS called `main` using the "Networking Only
+(Powered by AWS Fargate)" selection.
+
+1. Click on the "Task Definitions" link and click "Create a new task
+definition".
+
+1. Give the new task the name "ikiwiki".
+
+1. For "Task Role" enter the role created above: "roleECSAccessIkiwikiS3".
+
+1. Leave "Network Mode" set to "awsvpc".
+
+1. Choose reasonable values for the resource requirement settings.
+
+1. Set up the container definition by putting in the path to the container
+you want to use. In our case, that is `macrotex/ikiwiki-build`.
+
+1. Add other container settings including any environment variables.
+
+
+MORE TO COME
 
 
 
-Timings: From Git push to updated content available in S3 takes about ????
+Timings: From Git push to updated content available in S3 takes about 2
+minutes.
 
-
-
-
-
-
-
+Cost: ????
