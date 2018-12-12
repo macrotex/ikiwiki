@@ -1,0 +1,24 @@
+# Lambda For Containers
+
+## Introduction
+
+The AWS Lambda service allows the running of small bits of codes in a
+"serverless" environment. This means I don't have to worry about the
+back-end resources, they just run.
+
+AWS Lambda supports several programming languages including Python, Java,
+Go, Nodejs, and others. What it *doesn't* support is running a full
+container.
+
+An alternative to this would be to run the container in
+Kubernetes. However, this is more overhead than I want. Furthermore,
+Kubernetes implies that there are EC2 instances running all the time. What
+I want is a service that only uses AWS resources when needed.
+
+The option I settled on is to use ECS Fargate which allows me to run
+containers on demand and not worry about the underlying server
+infrastructure. In this document I will describe how to set up a complete
+workflow using ECS Fargate as well other parts of the AWS environment to
+deploy an ikiwiki web page.
+
+
