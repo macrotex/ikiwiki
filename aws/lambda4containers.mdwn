@@ -2,9 +2,9 @@
 
 ## Introduction
 
-The AWS Lambda service allows the running of small bits of codes in a
-"serverless" environment. This means I don't have to worry about the
-back-end resources, they just run.
+The [AWS Lambda service](https://aws.amazon.com/lambda/) allows the
+running of small bits of codes in a "serverless" environment. This means I
+don't have to worry about the back-end resources, they just run.
 
 AWS Lambda supports several programming languages including Python, Java,
 Go, Nodejs, and others. What it *doesn't* support is running a full
@@ -20,5 +20,43 @@ containers on demand and not worry about the underlying server
 infrastructure. In this document I will describe how to set up a complete
 workflow using ECS Fargate as well other parts of the AWS environment to
 deploy an ikiwiki web page.
+
+## The ikiwiki Workflow
+
+    Edit ikiwiki markdown file
+     --> Commit changes in Git repository
+     --> Push changes to GitHub
+     --> GitHub webhook makes call to AWS API Gateway
+     --> AWS API Gateway makes a call to an AWS Lambda function
+     --> The AWS Lambda function triggers a Task in AWS ECS Fargate
+     --> The task in AWS ECS Fargate runs a container that pulls the
+         Git repository from GitHub and runs it through ikwiki and writes
+         the output to AWS S3
+     --> AWS S3 serves the content as static web content
+
+We are using the following AWS services:
+
+    API Gateway
+    Lambda
+    ECS
+    S3
+    IAM (allows the various services to interact)
+
+## Putting it all together
+
+### The S3 bucket
+
+The ikiwiki content is all static web pages, so we can serve it via an S3
+bucket. Note that this means that the content is publically viewable and
+uses http, an unencrypted transport.
+
+
+
+Timings: From Git push to updated content available in S3 takes about ????
+
+
+
+
+
 
 
