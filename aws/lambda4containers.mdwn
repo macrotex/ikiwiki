@@ -90,30 +90,30 @@ container to copy the ikiwiki output to the `ikiwiki` S3 bucket.
 `ikiwiki` bucket. We will call this policy
 `CustomAccessToIkiwikiS3Bucket`.
 
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "VisualEditor0",
-                "Effect": "Allow",
-                "Action": "s3:ListBucket",
-                "Resource": "arn:aws:s3:::ikiwiki"
-            },
-            {
-                "Sid": "VisualEditor1",
-                "Effect": "Allow",
-                "Action": [
-                    "s3:PutObject",
-                    "s3:GetObject",
-                    "s3:DeleteObject"
-                ],
-                "Resource": [
-                    "arn:aws:s3:::ikiwiki-testing/*",
-                    "arn:aws:s3:::ikiwiki/*"
-                ]
-            }
-        ]
-    }
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Sid": "VisualEditor0",
+                    "Effect": "Allow",
+                    "Action": "s3:ListBucket",
+                    "Resource": "arn:aws:s3:::ikiwiki"
+                },
+                {
+                    "Sid": "VisualEditor1",
+                    "Effect": "Allow",
+                    "Action": [
+                        "s3:PutObject",
+                        "s3:GetObject",
+                        "s3:DeleteObject"
+                    ],
+                    "Resource": [
+                        "arn:aws:s3:::ikiwiki-testing/*",
+                        "arn:aws:s3:::ikiwiki/*"
+                    ]
+                }
+            ]
+        }
 
 1. Create a role that we can assign to our ECS Tasks so they can access the S3 buckets.
 
@@ -161,6 +161,9 @@ definition".
 you want to use. In our case, that is `macrotex/ikiwiki-build`.
 
 1. Add other container settings including any environment variables.
+
+1. Test this task definition by choosing "Run Task".
+
 
 
 MORE TO COME
