@@ -9,7 +9,7 @@ running of small bits of codes in a "serverless" environment. This means I
 don't have to worry about the back-end resources, they just run.
 
 AWS Lambda supports several programming languages including Python, Java,
-Go, Nodejs, and others. What it *doesn't* support is running a full
+Go, Node.js, and others. What it *doesn't* support is running a full
 container.
 
 An alternative to this would be to run the container in
@@ -81,7 +81,7 @@ public policies" in "Public access settings".
 
 ### Step 2. Create IAM role allowing access to S3 bucket
 
-We need an IAM role that we can assign to the container that llows the
+We need an IAM role that we can assign to the container that allows the
 container to copy the ikiwiki output to the `ikiwiki` S3 bucket.
 
 1. Go to the IAM page.
@@ -132,9 +132,27 @@ on the "Elastic Container Service".
 
 1. Click the "Next: Tags" and then click "Next: Review".
 
-1. For "Role name" type in "roleECSAccessIkiwikiS3".
+1. For "Role name" type in "`roleECSAccessIkiwikiS3`".
 
 1. Click "Create role".
+
+### Step 3. Create IAM role allowing AWS Lambda to run an ECS task
+
+We need another IAM role that we can assign to an AWS Lambda function that
+will allow that function to run an ECS task.
+
+1. Go to the IAM page.
+
+1. Click "Create policy".
+
+1. Click the "JSON" tab.
+
+1. 
+1. Create a new policy that allows the running of an ECS tasllisting, reading, and writing of the
+`ikiwiki` bucket. We will call this policy
+`CustomAccessToIkiwikiS3Bucket`.
+
+
 
 ### Step 3. Setup the ECS cluster and task
 
@@ -151,18 +169,45 @@ definition".
 
 1. Give the new task the name "ikiwiki".
 
-1. For "Task Role" enter the role created above: "roleECSAccessIkiwikiS3".
+1. For "Task Role" enter the role created above: "`roleECSAccessIkiwikiS3`".
 
-1. Leave "Network Mode" set to "awsvpc".
+1. Leave "Network Mode" set to "`awsvpc`".
 
 1. Choose reasonable values for the resource requirement settings.
 
 1. Set up the container definition by putting in the path to the container
-you want to use. In our case, that is `macrotex/ikiwiki-build`.
+you want to use. In our case, our container is in the public part of
+Docker Hub, so we enter `macrotex/ikiwiki-build`.
 
 1. Add other container settings including any environment variables.
 
 1. Test this task definition by choosing "Run Task".
+
+### Step 5. Create an AWS Lambda function to trigger the ECS task
+
+We next create an AWS Lambda function that will call the ECS `ikiwiki`
+task we created above.
+
+1. In AWS Lambda click the "Create function" buttone.
+
+1. Chosse the "Author from scratch" rectangle.
+
+1. Under "Name" type in `ecs_run_task`.
+
+1. Under "Runtime" choose Python 3.6.
+
+1. Under "Role" select "Choose an existing role".
+
+1. Under "Existing role" select "`lambda_run_ecs_task`".
+
+
+
+1. 
+
+### Step 4. Create an API Gateway interface that receives the GitHub webhook
+
+When we push a commit to the GitHub repository we want a webhook to call
+on an AWS API Gateway 
 
 
 

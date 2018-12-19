@@ -1,0 +1,110 @@
+# Some Notes in GCP IAM (Identity and Access Managment)
+
+## Identities
+Identities are entities that can do things (e.g., create or list a
+resource). These are the kinds of identities:
+
+* Google account
+* Service account
+* Google group
+* GSuite domain
+* Cloud Identity domain
+
+Service accounts are used by applications to access other
+resources. Service accounts are identified by e-mail addresses.
+
+Google groups are collections of service accounts and Google accounts.
+
+**Question**: can groups be nested?
+
+Note: Google documentation uses the confusing term "member" when
+they really mean "identity".
+
+## Resources
+
+Note: Google uses the term "resource" in inconsistent ways. To
+correct for this, we will avoid the use of the naked term "resource"
+and instead prefix it with a modifier.
+
+Resources are the "objects" of the GCP universe. There are four
+kinds of resources:
+
+* Organization resources
+* Folder resources
+* Project resources
+* Service resources
+
+These resources form a hierarchy:
+
+    Organization resources
+            |
+            |
+    Folder resources
+            |
+            |
+    Project resources
+            |
+            |
+    Service resources
+
+Folders can contain other Folders.
+
+Not every GCP account needs to have an organization; however, GSuite and
+Cloud Identity customers must have exactly one organization.
+
+Folders can only exist inside an Organization. However, folders are
+optional, that is, you can have an organization and projects but have no
+folders.
+
+Service resources are things like virtual machines, storage buckets,
+etc. Here are some of the basic service resource types:
+
+* Storage
+* Compute Engine (aka GCE)
+* Kubernetes Engine
+* Cloud SQL
+* Virtual Private Cloud
+* Cloud DNS
+
+## Permissions
+
+Permissions determine what operations are allowed on a
+resource. Permissions are represented in the form of
+`<service>.<resource>.<verb>`. You don't assign permissions to users
+directly, instead, you assign them a Role. Some examples:
+
+* `Storage.buckets.list`
+* `compute.firewalls.list`
+
+**Question:** Where can I find a list of Compute permissions?
+
+## Roles
+
+Roles are collections of permissions.
+
+Primitive roles: historical; only three kinds: Owner, Editor, and
+Viewer. Primitive roles apply at the project level; they cannot be applied
+at the more granular service resource level.
+
+
+## Policies
+
+A **policy binding** (not an official Google term) is a set of identities
+together with a single role. A **policy** is a set of bindings.
+
+Once you have a policy, you can attach a policy to a resource. This policy
+then controls access to that resource.
+
+Once you have a policy, you can attach a policy to a resource. This policy
+then controls access to that resource.
+
+**Question:** if you have a policy that contains a role with permissions
+relevant to storage and you assign that policy to a VPC instance, what
+does this mean? Is an error thrown?
+
+Policies are inherited _downwards_, that is, a policy attached to an
+organization is inherited by a folder in that organization. A policy
+attached to a folder is inherited by all of that folder's subfolders,
+by any projects in that folder, and any resources in that project.
+
+Child policies cannot restrict access granted at a higher level.
