@@ -1,19 +1,25 @@
 # Some Notes in GCP IAM (Identity and Access Managment)
 
-## Identities
-Identities are entities that can do things (e.g., create or list a
-resource). These are the kinds of identities:
+https://cloud.google.com/iam/docs/
 
-* Google account
-* Service account
-* Google group
-* GSuite domain
-* Cloud Identity domain
+
+GCP IAM (Identity and Access Managment) if used to define
+> who (identity) has what access (role) for which resource
+
+
+## Identities
+
+Identities are entities that can do things (e.g., create or list a
+resource). These are the kinds of identities (and sets of identities):
+
+* Google account: a person
+* Service account: an application
+* Google group: a set of Google and service accounts
+* GSuite domain: a set of Google accounts in a Google domain
+* Cloud Identity domain: a set of Google accounts (similar to a Google domain)
 
 Service accounts are used by applications to access other
 resources. Service accounts are identified by e-mail addresses.
-
-Google groups are collections of service accounts and Google accounts.
 
 **Question**: can groups be nested?
 

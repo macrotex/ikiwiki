@@ -1,0 +1,5 @@
+# Google Cloud Platform Concepts
+
+# [Locations](locations)
+# [Identity and Access Management](iam)
+

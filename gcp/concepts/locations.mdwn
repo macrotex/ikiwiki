@@ -1,0 +1,13 @@
+# Location Groupings
+
+*Zone*: the finest-grain. Can think of as a data center. Examples:
+`us-central1-a`, `us-central1-b`, `asia-northeast1`
+
+*Region*: zones grouped into regions. A region is an "independent
+geographic area". Zones in the same region have very fast network
+interconnects. Examples: `us-central1`, `us-west2`, `asia-south1`,
+
+*Multi-region*: a geographic area containing more than one region. Example:
+us, europe, australia.
+
+*Global*: everything. Example: the S3 service is global.
