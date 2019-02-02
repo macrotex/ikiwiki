@@ -62,6 +62,15 @@ Folders can only exist inside an Organization. However, folders are
 optional, that is, you can have an organization and projects but have no
 folders.
 
+### Projects resources
+
+From the GCP documentation, a project
+
+> forms the basis for creating, enabling, and using all GCP services,
+> managing APIs, enabling billing, adding and removing collaborators, and
+> managing permissions.
+
+### Service Resources
 Service resources are things like virtual machines, storage buckets,
 etc. Here are some of the basic service resource types:
 

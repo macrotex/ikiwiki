@@ -147,7 +147,7 @@ will allow that function to run an ECS task.
 
 1. Click the "JSON" tab.
 
-1. 
+1.
 1. Create a new policy that allows the running of an ECS tasllisting, reading, and writing of the
 `ikiwiki` bucket. We will call this policy
 `CustomAccessToIkiwikiS3Bucket`.
@@ -202,12 +202,12 @@ task we created above.
 
 
 
-1. 
+1.
 
 ### Step 4. Create an API Gateway interface that receives the GitHub webhook
 
 When we push a commit to the GitHub repository we want a webhook to call
-on an AWS API Gateway 
+on an AWS API Gateway
 
 
 
