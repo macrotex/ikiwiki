@@ -5,13 +5,14 @@ repository. We will use a GitHub "deploy" key to accomplish this. This
 process allows you to use *different* key-pairs for different GitHub
 repositoies in the same GitHub account.
 
-Say you ahve two projects `project1` and `project2` in your GitHub
+Say you have two projects `project1` and `project2` in your GitHub
 account. You can set up the same deploy key for both projects or different
 keys for each.
 
-1. Call the GitHub repository `project9`.
+1. We assume that the GitHub repository is called `project9`.
 
-1. Create a *new* SSH key-pair. For the e-mail address you can put anything(?).
+1. Create a *new* SSH key-pair. For the e-mail address you can put
+anything you want; it is just a label.
 
         ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f project9
 
