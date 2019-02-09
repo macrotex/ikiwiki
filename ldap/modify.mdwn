@@ -1,0 +1,122 @@
+[[!toc levels=2]]
+# Modifying LDAP entries
+
+
+## 1. Delete an entry
+
+Let's delete Ferd Berfel.
+
+    ldapdelete <dn>
+    ldapdelete cn=ferd_berfel,dc=example,dc=com
+
+## 2. Delete an entry's attribute
+
+If there is only one attribute or you want to delete *all* instances of
+that attribute:
+
+    dn: cn=ferd_berfel,dc=example,dc=com
+    changetype: modify
+    delete: uniqueMember
+
+If there is more than one attribute and you don't want to delete all of
+them, specify which attribute you want to delete:
+
+    dn: cn=ferd_berfel,dc=example,dc=com
+    changetype: modify
+    delete: uniqueMember
+    uniqueMember: cn=jsmith,ou=users,dc=s2rsolutions,dc=com
+
+## 3. Delete an objectClass
+
+You can only delete an objectClass when all the attributes bound to that
+objectClass (and to no other objectClass) are deleted first. See above for
+how to delete attributes. Once there are no attributes bound only to that
+objectClass, you can safely delete the objectClass itself:
+
+    dn: cn=ferd_berfel,dc=example,dc=com
+    changetype: modify
+    delete: objectClass
+    objectClass: suGALperson
+
+## 3. Add an objectClass
+
+Here we add the `suKerberosService` object class. Note we also
+have to add `suKerberosStatus` to satisfy the schema constraint (see the
+schema definitions for constraints):
+
+    dn: cn=ferd_berfel,dc=example,dc=com
+    changetype: modify
+    add: objectClass
+    objectClass: suKerberosService
+    -
+    add: suKerberosStatus
+    suKerberosStatus: active
+
+
+## 4. Add an attribute
+
+### 4a. Add a member to an existing group
+
+    dn: cn=peopleTreeMaster,cn=applications,dc=example,dc=com
+    changetype: modify
+    add: member
+    member: cn=harvester,cn=service-win,cn=applications,dc=example,dc=com
+
+### 4a. Add a multi-valued attribute with ordering
+
+Assume that we have have these attributes as part of the `cn=config`
+entry:
+
+    olcAuthzRegexp: {0}"uid=(.*)@win.example.com,cn=example.com,cn=gssapi,cn=auth" "ldap:///cn=service-win,cn=Applications,dc=example,dc=com??sub?krb5PrincipalName=$1@WIN.EXAMPLE.COM"
+    olcAuthzRegexp: {1}"uid=host/(.*),cn=example.com,cn=gssapi,cn=auth" "ldap:///cn=Host,cn=Applications,dc=example,dc=com??sub?krb5PrincipalName=host/$1@example.com"
+    olcAuthzRegexp: {2}"uid=service/(.*),cn=example.com,cn=gssapi,cn=auth" "ldap:///cn=Service,cn=Applications,dc=example,dc=com??sub?krb5PrincipalName=service/$1@example.com"
+    olcAuthzRegexp: {3}"uid=ldap/(.*),cn=example.com,cn=gssapi,cn=auth" "ldap:///cn=ldap,cn=Operational,dc=example,dc=com??sub?krb5PrincipalName=ldap/$1@example.com"
+    olcAuthzRegexp: {4}"uid=(.*),cn=example.com,cn=gssapi,cn=auth" "uid=$1,cn=Accounts,dc=example,dc=com"
+
+We want to add a *new* entry between `{3}` and `{4}`. To do that ...?
+
+    dn: cn=config
+    changetype: modify
+    add: olcAuthzRegexp
+    olcAuthzRegexp: {4}"uid=(.*)/root,cn=example.com,cn=gssapi,cn=auth" "ldap:///cn=root,cn=Applications,dc=example,dc=com??sub?krb5PrincipalName=$1/root@example.com"
+
+The result is now
+
+
+## 5. Modify (replace) an existing attribute "in-place"
+
+### 5a. If the attribute is SINGLE-VALUED
+
+    dn: cn=ferd_berfel,dc=example,dc=com
+    changetype: modify
+    replace: surname
+    surname: Berfelle
+
+### 5b. If the attribute is MULTI-VALUED
+
+For a multi-valued attribute, you have to *delete* the target instance of
+the attribute, and then *add* it back.
+
+    dn: uid=ajeffqq,cn=accounts,dc=example,dc=com
+    changetype: modify
+    delete: suSeasSunetID
+    suSeasSunetID: ajefferson
+    -
+    add: suSeasSunetID
+    suSeasSunetID: ajefferson2
+
+
+## 6. Add a new entry
+
+Let's add a new person. The `person` objectClass requires a
+cn and an sn.
+
+    # ferdberfel.ldif
+    dn: cn=ferd_berfel,dc=example,dc=com
+    cn: Ferd Berfel
+    sn: Berfel
+    objectclass: person
+
+Noe use the `ldapadd` command:
+
+    ldapadd < /tmp/ferdberfel.ldif
