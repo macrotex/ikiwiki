@@ -1,0 +1,46 @@
+# Setup different deploy keys for different GitHub repositories
+
+We want to allow a foreign machine to read *and* write to a GitHub
+repository. We will use a GitHub "deploy" key to accomplish this. This
+process allows you to use *different* key-pairs for different GitHub
+repositoies in the same GitHub account.
+
+Say you ahve two projects `project1` and `project2` in your GitHub
+account. You can set up the same deploy key for both projects or different
+keys for each.
+
+1. Call the GitHub repository `project9`.
+
+1. Create a *new* SSH key-pair. For the e-mail address you can put anything(?).
+
+        ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f project9
+
+1. The above comand created two files: `project9` (containing the private
+part of of the key-pair) and `project9.pub` (containing the public part).
+
+1. Move these two files into your usual `.ssh` directory where all your SSH
+options and other keyfiles are kept. For example:
+
+        mv project9* $HOME/.ssh/
+
+1. Add the *public* key (`project9`) as a deploy key in the GitHub repository
+`project`. Be sure to CHECK the "Allow write access" box.
+
+1. Clone the GitHub repository:
+
+        git clone https://github.com/githubuser/project9.git
+
+1. Change directory into the cloned repository:
+
+        cd project9
+
+1. Configure this working directory to use the `project9` SSH private key
+when pushing:
+
+        git config core.sshCommand "ssh -i ~/.ssh/project9 -F /dev/null"
+
+1. Change the URL from `https` to `ssh`:
+
+        git remote set-url origin git@github.com:githubuser/project9.git
+
+1. Now you can push.
