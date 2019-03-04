@@ -138,23 +138,6 @@ on the "Elastic Container Service".
 
 1. Click "Create role".
 
-### Step 3. Create IAM role allowing AWS Lambda to run an ECS task
-
-We need another IAM role that we can assign to an AWS Lambda function that
-will allow that function to run an ECS task.
-
-1. Go to the IAM page.
-
-1. Click "Create policy".
-
-1. Click the "JSON" tab.
-
-1.
-1. Create a new policy that allows the running of an ECS tasllisting, reading, and writing of the
-`ikiwiki` bucket. We will call this policy
-`CustomAccessToIkiwikiS3Bucket`.
-
-
 
 ### Step 3. Setup the ECS cluster and task
 
@@ -169,7 +152,7 @@ Elastic Container Registry.
 1. Click on the "Task Definitions" link and click "Create a new task
 definition".
 
-1. Give the new task the name "ikiwiki".
+1. Give the new task the name "`ikiwiki`".
 
 1. For "Task Role" enter the role created above: "`roleECSAccessIkiwikiS3`".
 
@@ -185,7 +168,7 @@ Docker Hub, so we enter `macrotex/ikiwiki-build`.
 
 1. Test this task definition by choosing "Run Task".
 
-### Step 5. Create an AWS Lambda function to trigger the ECS task
+### Step 4. Create an AWS Lambda function to trigger the ECS task
 
 We next create an AWS Lambda function that will call the ECS `ikiwiki`
 task we created above.
@@ -202,19 +185,77 @@ task we created above.
 
 1. Under "Existing role" select "`lambda_run_ecs_task`".
 
+1. Create the function: see
+[AWS Lambda Function to Trigger ECS on a GitHub Webhook](lambda-function)
+for details on this step.
 
-
-1.
-
-### Step 4. Create an API Gateway interface that receives the GitHub webhook
+### Step 5. Create an API Gateway interface that receives the GitHub webhook
 
 When we push a commit to the GitHub repository we want a webhook to call
-on an AWS API Gateway
+on the AWS API Gateway.
+
+1. Create a new API called "`ikiwiki`". Choose the "REST" protocol.
+
+1. Create a resource action with method "POST". Choose "Lambda Function"
+for the Integration Type.
+
+1. For the Lambda function type in "`ecs_run_task`".
+
+1. Deploy this API using the "Deploy API" action in the "Actions"
+drop-down. Use the name `main-ikiwiki` for the deployment name.
+
+1. Under the "Stages" section you will see your new deployment. Click on
+the deployment to get the dployment URL. You will need this URL for
+the GitHub integration. It will look something like
+
+        Invoke URL:  https://qimm19ruwq.execute-api.us-east-1.amazonaws.com/main-ikiwiki/
+
+### Step 6. Configure GitHub to call the AWS API on repsitory changes
+
+1. Go into your GitHub repository settings and clien on the "Webhooks"
+section.
+
+1. Click the "Add webhook" button.
+
+1. For the "Payload URL" enter the URL from the last step of the previous
+section.
+
+1. For "Content type" choose "`application/json`".
+
+1. Select "Enable SSL verification".
+
+1. For "Secret" type in a random string of characters. Remember this
+string as you will need it later.
 
 
+### Step 7. Add mapping template to the AWS API POST method
 
-MORE TO COME
+We need to pass three parameters from the GitHub webhook into Lambda.
 
+1. Go back to the `ikiwiki` AWS API and click on the `POST` method.
+
+1. You should see at the top of the page "POST - Method Execution" and
+four labelled boxes.
+
+1. Click on the " Integration Request" box.
+
+1. Scroll down to "Mapping Templates" and expand.
+
+1. Under "Request body passthrough" select "When there are no templates
+defined (recommended)".
+
+1. Click "Add mapping template".
+
+1. For "Content-Type" enter "`application/json`".
+
+1. Enter this JSON string (replacing "`SECRET FROM GITHUB WEBHOOK`" with
+the appropriate secret:
+
+        {
+            "x_hub_signature": "$util.escapeJavaScript($input.params().header.get('X-Hub-Signature'))",
+            "secret":  "SECRET FROM GITHUB WEBHOOK",
+            "payload": "$util.base64Encode($input.body)"
+        }
 
 
 Timings: From Git push to updated content available in S3 takes about 2

@@ -1,0 +1,85 @@
+# AWS Lambda Function to Trigger ECS on a GitHub Webhook
+
+The following is the AWS Lambda python function I use to listen for a
+GitHib.
+
+Here is how the GitHub webhooks works:
+
+1. When the associated GitHub repository receives a push it constructs a "payload" that
+includes the commit hash as well as a bunch of other stuff..
+
+1. GitHub posts to the configured endpoint. In this post is included
+a `X-Hub-Signature` header that is the HMAC of of the payload using the
+wwebhook secret.
+
+
+When the AWS API gets posted to by GitHub, it calls the AWS Lambda function
+`ecs_run_task` passing it three parameters (see section
+"Add mapping template to the AWS API POST method" on previous page).
+
+The Lambda function below takes the request from the AWS API, extracts the payload, decodes it,
+computes the HMAC of the payload using the secret and compares it to the
+`X-Hub-Signature` header. If they match, the Lambda function concludes that the request
+is authentic and calls the ECS task.
+
+The code:
+
+    # Python 3
+
+    import json
+    import boto3
+    import re
+    import http
+    import hashlib
+    import hmac
+    import base64
+    import urllib
+
+    # Based on https://github.com/pristineio/lambda-webhook
+
+    def verify_signature(secret, signature, payload_decoded):
+        computed_hash = hmac.new(str(secret).encode(), payload_decoded, hashlib.sha1)
+        computed_signature = '='.join(['sha1', computed_hash.hexdigest()])
+        return hmac.compare_digest(computed_signature, str(signature))
+
+    def return_response(code, message):
+        return {
+           'statusCode': code,
+            'body': message
+        }
+
+    def lambda_handler(event, context):
+        if ('secret' not in event):
+            return return_response(400, "Error: 'secret' key not found in event parameter")
+
+        if ('x_hub_signature' not in event):
+            return return_response(400, "Error: 'x_hub_signature' key not found in event parameter")
+
+        if ('payload' not in event):
+            return return_response(400, "Error: 'payload' key not found in event parameter")
+
+        secret          = event['secret']
+        signature       = event['x_hub_signature']
+        payload_decoded = base64.b64decode(event['payload'])
+
+        verified = verify_signature(secret, signature, payload_decoded)
+
+        if (not verified):
+            return return_response(400, "Error: signature did not match")
+
+        client = boto3.client('ecs')
+
+        client.run_task(
+            cluster='main',
+            taskDefinition="ikiwiki:3",
+            launchType='FARGATE',
+            networkConfiguration={
+                'awsvpcConfiguration': {
+                    'subnets': [
+                        'subnet-0ecfd28aaf775906a',
+                    ],
+                    'assignPublicIp': 'ENABLED',
+                }
+            },
+        )
+        return return_response(200, "Started task successfully")
