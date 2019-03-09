@@ -27,6 +27,15 @@ deploy an ikiwiki web page.
 
 ## The ikiwiki Workflow
 
+Here is a picture of how the the various services interact:
+
+                                                  DockerHub
+                                                     |
+                                                     v
+    Git --> GitHub --> AWS API --> AWS Lambda --> AWS ECS --> AWS S3
+
+In more detail:
+
     Edit ikiwiki markdown file
      --> Commit changes in Git repository
      --> Push changes to GitHub
@@ -186,7 +195,7 @@ task we created above.
 1. Under "Existing role" select "`lambda_run_ecs_task`".
 
 1. Create the function: see
-[AWS Lambda Function to Trigger ECS on a GitHub Webhook](lambda-function)
+[AWS Lambda Function to Trigger ECS on a GitHub Webhook](../lambda-function)
 for details on this step.
 
 ### Step 5. Create an API Gateway interface that receives the GitHub webhook
@@ -261,4 +270,15 @@ the appropriate secret:
 Timings: From Git push to updated content available in S3 takes about 2
 minutes.
 
-Cost: ????
+## Cost
+
+The AWS services used are all "pay-as-you-go". That is, the less you use
+them, the lower the cost, all the way to zero. Here is esttimate of the
+cost of the ikiwiki service described above (al costs per-month):
+Assumes a few dozen pushes per month:
+
+    Price            Our cost
+    AWS S3 ($0.02/GB)                      $0.02
+    AWS API ($3.50 for 1st 333 million)    $3.50 (?)
+    AWS ECS Fargate                        minimal
+    AWS Lambda (in free tier)              free
