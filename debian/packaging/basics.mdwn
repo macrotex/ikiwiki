@@ -1,0 +1,82 @@
+[[!toc levels=3]]
+
+# Debian packaging basics and definitions
+
+## The "upstream" distribution
+
+Most Debian software is derived from some non-Debian software project
+(e.g., Apache, OpenLDAP, etc.). We refer to these files as the _upstream
+software_ or _upstream dstribution_. The upstream software is usually
+supplied as a `.tar.gz` tarball. Usually (but not always) this software
+has no special support for Debian or Debian package building. It is the
+job of Debian packagers to take this upstream distribution and turn it
+into a Debian package.
+
+The Debian packaging tools expect the upstream distribution tarball to
+have a name in the format `package-version.tar.gz`. The `package-version`
+part is described in the Package Version section.
+
+## Debian binary package
+
+The Debian binary package (`.deb`) is the actual file containing the
+sofware and other support files needed to install software onto a Debian
+system. A `.deb` file is analogous to an `.rpm` file for RedHat
+systems.
+
+A Debian binary package is an `ar` archive containing these files:
+
+* `data.tar.xz`: the files to install on the Debian system
+
+* `control.tar.gz`: isntructions on how to install the files including the
+package `control` file, other package dependencies, and optional scripts
+used during package install and removal
+
+To extract these files from a `.deb` file use `ar -x`:
+
+    ar -x hello-debian_0.0.2-5-11_amd64.deb
+
+Most Debian binary packages are intended to be installed on a specific
+version of Debian, for example, Debian `stretch`. Thus, Debian binary
+files have to be rebuilt for each different version of Debian. The Debian
+source package is used to build `.deb` files.
+
+See also [Packaging
+BinaryPackage](https://wiki.debian.org/Packaging/BinaryPackage) and [the
+Debian Policy Manual on Binary
+packages](https://www.debian.org/doc/debian-policy/ch-binary.html).
+
+## Debian source package
+
+A Debian source package , according to [Packaging
+SourcePackage](https://wiki.debian.org/Packaging/SourcePackage),
+
+> ... provided you with all of the necessary files to compile or
+> otherwise, build the desired piece of software.
+
+Unlike a Debian binary package a Debian source package is not a single
+file, rather, a source package consists of three files:
+
+* The upstream tarball ending in `.tar.gz`.
+
+* The `.dsc` file ("desription of the source code"
+
+* (optional) a file containing changes to the upstream source; this usally
+  exists and, for non-native packages, ends in `.debian.tar.gz`.
+
+### The `.dsc` file
+
+The `.dsc` file contains a number of fields that describe how the Debian
+package was build. These fields correspond to the fields in the
+`debian/control` file. For more information on the `.dsc` file and the
+supported fields, see the man page (`man dsc`).
+
+### Building the source package
+
+The principal tool used with Debian package source files is
+`dpkg-source`. To build the source package you would change into the
+directory containng the Debian package files and run
+
+    dpkg-source --build .
+
+Typically you do _not_ run this command explicitly, rather, one of the
+[Debian package tools](??) calls this command itself.

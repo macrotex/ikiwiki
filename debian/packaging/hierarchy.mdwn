@@ -1,0 +1,146 @@
+# The Debian Packaging Tools Hierarchy
+
+From low-level to high-level:
+
+        LOCAL                 CHROOT             GIT
+        -----                 ------             ---
+
+        debhelper
+           ^
+           |
+           |
+        dpkg-buildpackage <-------+
+           ^                      |
+           |                      |
+           |                      |
+        debuild               cowbuilder
+                                  ^
+                                  |
+                                  |
+                              pdebuild  <---- git-pbuilder
+                                  ^                ^
+                                  |                |
+                                  |                |
+                               pbuild        gbp buildpackage
+
+
+## `debhelper`
+
+`debhelper` is suite of programs each of which does a small part of the
+Debian packaging build. You rarely run these explicitly, but it is
+important to know about them as you may need to use some of them in your
+Debian `rules` file.
+
+For a list of all the debhlper commands see the `debhelper` man page.
+
+## `dpkg-buildpackage`
+
+The `dpkg-buildpackage` program builds the source and binary packages
+using `dpkg-source` and the `debhelper` commands. To build package:
+
+    # We like to sign the source and binary package later:
+    dpkg-buildpackage --unsigned-source --unsigned-changes
+
+    # To build the binary backage only (no source)
+    dpkg-buildpackage -b --unsigned-source --unsigned-changes
+
+Note that running `dpkg-buildpackage` will leave new files in your
+Debian package directory.
+
+The system on which you run `dpkg-buildpackage` must have all the packages
+listed in the `Build-Depends` field of the `control` file or the build
+will fail. You can avoid this requirement by using one of the higher-level
+packaging tools such as `debuild` or `gbp buildpackage`.
+
+## Changes to the code
+
+If you want to test package building, and you are building a native
+package, it is usually easiiest to use `dpkg-buildpackage`. Wth the
+higher-level packaging tools, changing the source code will cause the
+package biuld to stop and ask you to commit your changes.
+
+For non-native packages, ....
+
+## `debuild`
+
+The `debuild` program calls `dpkg-buildpackage`, `lintian`, and then signs
+the package using `debsign`. Options at the end are passed to
+`dpkg-buildpackage`. The following are essentially equivalent:
+
+    # debuild --no-lintian -us -uc
+    # dpkg-build-package --unsigned-source --unsigned-changes
+
+(For some reason `debuild` does not like `--unsigned-source` and
+`--unsigned-changes`, so use `-us` and `-uc` instead).
+
+## `cowbuilder` (chroot)
+
+The `cowbuilder` utility is part of `pbuilder` and is used to build a
+Debian package inside a chroot. This gives a "clean-room" Debian package
+build. For this to work, each Debian distribution must have a
+[chroot](https://wiki.archlinux.org/index.php/Chroot) at
+`/var/cache/pbuilder/base-<distribution>.cow`, for example,
+`/var/cache/pbuilder/base-stretch.cow`.
+
+Note that to run `cowbuilder` you must have sudo privileges. For example,
+the following line in `//etc/sudoers` grants all users belonging to the
+`root` group permission to run `sudo cowbuilder`
+
+    %root ALL = NOPASSWD: /usr/sbin/cowbuilder
+
+See also the man page for `pbuilderrc`.
+
+## `pdebuild` (chroot)
+
+Wrapper around `pbuilder`. Here is an example of its use where
+we invoke `pbuilder` using cowbuilder
+
+    pdebuild --pbuilder cowbuilder --buildresult .. \
+             --debbuildopts -i -- \
+             --basepath /var/cache/pbuilder/base-stretch.cow \
+             --distribution stretch --configfile /etc/pbuilder/stretch
+
+This is roughly equivalent to
+
+    # sudo cowbuilder build ... <some .dsc file>
+
+## `pbuild`
+
+The `pbuild` is a convenience wrapper around `pdebuild`. For example,
+`pbuild stretch` calls
+
+    pdebuild --pbuilder cowbuilder --buildresult .. \
+             --debbuildopts -i -- \
+             --basepath /var/cache/pbuilder/base-stretch.cow \
+             --distribution stretch --configfile /etc/pbuilder/stretch
+
+## `git-pbuilder` (GIT)
+
+The `git-pbuilder` program is meant to be called by `gbp buldpackage` and
+wraps `pdebuild` tpically
+
+
+## `gbp buildpackage` (GIT plus CHROOT)
+
+The `gbp` suite of commands are used to maintain Debian packages in
+git. In particular, we use `gbp buildpackage` to build a Debian package
+inside a git repository containing the package source code. Invoking
+`gbp buildpackage` does several things including calling one of the
+lower-level package bulding tools such as `debuild` or `cowbuilder`.
+
+### The `.gbp.conf` configuration file
+
+You configure `gbp` by adding settings to `.gbp.conf` in your home
+directory. For example, the following
+
+    [DEFAULT]
+    builder = git-pbuilder
+    cleaner = fakeroot debian/rules clean
+    pristine-tar = True
+
+    [buildpackage]
+    export-dir = ../build-area/
+    tarball-dir = ../tarballs/
+
+    [import-orig]
+    dch = False
