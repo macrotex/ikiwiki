@@ -20,10 +20,18 @@ h5 { font-size: 1em; font-weight: normal; font-style: italic; }
 
 #content  { margin: 10px; background: #fff; }
 
+
+code {
+    font-weight: bold;
+    background-color: #DDD;
+    padding-left: 0.20em;
+    padding-right: 0.20em;
+}
+
 .header
 {
     font-family: sans-serif;
-    color: #0B5345;;
+    color: #0B5345;
     font-size: 1.4em;
     padding: 12px 10px 12px 10px;
     font-weight: normal;
