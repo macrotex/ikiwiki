@@ -47,14 +47,14 @@ packages](https://www.debian.org/doc/debian-policy/ch-binary.html).
 
 ## Debian source package
 
-A Debian source package , according to [Packaging
+A Debian source package,  according to [Packaging
 SourcePackage](https://wiki.debian.org/Packaging/SourcePackage),
 
-> ... provided you with all of the necessary files to compile or
+> ... provide[s] you with all of the necessary files to compile or
 > otherwise, build the desired piece of software.
 
 Unlike a Debian binary package a Debian source package is not a single
-file, rather, a source package consists of three files:
+file, rather, it consists of three files:
 
 * The upstream tarball ending in `.tar.gz`.
 
@@ -78,5 +78,6 @@ directory containng the Debian package files and run
 
     dpkg-source --build .
 
-Typically you do _not_ run this command explicitly, rather, one of the
-[Debian package tools](../hierarchy) calls this command itself.
+Typically you do _not_ run this command explicitly, instead, one of the
+[Debian package tools](../hierarchy) calls this command during the package
+build process.

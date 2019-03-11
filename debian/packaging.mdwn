@@ -2,3 +2,4 @@
 
 * [Debian packaging basics and definitions](basics)
 * [The tools hierarchy](hierarchy)
+* [Debian versions](versioning)

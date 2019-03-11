@@ -5,33 +5,60 @@
 ## Introduction
 
 Start here: [section 5.6.12 of the Debian Policy
-Manual](https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-version)
-or the man page for `deb-version`.
+Manual](https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-version),
+or see the man page for `deb-version`.
 
-Short answer: the package version is
+The package version is
 
     upstream_version[-debian_revision]
 
-A package without a debian revision number indicates the package was
+A package without a Debian revision number indicates the software was
 written to be a Debian package.
 
 ## Examples
 
-slapd (2.4.44+dfsg-5+deb9u2): The upstream version is `2.4.44+dfsg` and
-the debian revision is `5+deb9u2`.
+slapd (`2.4.44+dfsg-5+deb9u2`): The upstream version is `2.4.44+dfsg` and
+the Debian revision is `5+deb9u2`.
 
-linux-base (4.5~deb8u1): The upstream version is `4.5~deb8u1` and there is
-NO debian revision number.
+linux-base (`4.5~deb8u1`): The upstream version is `4.5~deb8u1` and there is
+NO Debian revision number.
 
-The first number in the debian revision indicates how often the debian
+The first number in the Debian revision indicates how often the Debian
 package has been revised, starting over at `1` when the upstream version
 changes. The `+deb9u2` indicates that the Debian packaging itself has not
-changed, but that a patch has been added to the Debian package build so
-address some security or other software issue.
+changed, but that a patch has been added to the Debian package build to
+address some security or other type of bug.
 
+## Version ordering
+
+The package installation system when upgrading packages choose to
+overwrite an older version of a package with a newer package. In this case
+"newer" means the version number is larger. Thus, how versions are
+compared is compared is important. To compare two versions, you can use
+
+    dpkg --compare-versions 11a lt 100a && echo true
+
+(Source: [StackOverflow](https://stackoverflow.com/questions/4957514/how-to-compare-debian-package-versions).)
+
+For the detailed algorithm on version comparisons, see
+[section 5.6.12 of the Debian Policy
+Manual](https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-version).
+
+### Using tilde (`~`) in the Debian version
+
+The tilde character is sometimes used in the Debian version portion of the
+version and has the unusual characteristic of forcing the version to be
+sorted earlier (assuming the initial portions are the same). This is
+easiest to see with an example:
+
+    1.2-4~a~a < 1.2-4~a < 1.2-4~b < 1.2-4 < 1.2-5~a < 1.2-5 < 1.3-1
+
+See [section 5.6.12 of the Debian Policy
+Manual](https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-version)
+for more details.
 
 ## Notes
 
-For an exaplanation of `+dfsg` see [What does "dfsg" or "ds" in the
+For an explanation of `+dfsg` see [What does "dfsg" or "ds" in the
 version string
-mean?"](https://wiki.debian.org/DebianMentorsFaq#What_does_.2BIBw-dfsg.2BIB0_or_.2BIBw-ds.2BIB0_in_the_version_string_mean.3F).
+mean?](https://wiki.debian.org/DebianMentorsFaq#What_does_.2BIBw-dfsg.2BIB0_or_.2BIBw-ds.2BIB0_in_the_version_string_mean.3F).

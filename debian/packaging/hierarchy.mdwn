@@ -37,10 +37,28 @@ There are three main ways to build a Debian package:
 
 1. Use `gbp buildpackage`.
 
-### Using `dpk-buildpackage`.
+### Using `dpk-buildpackage`
 
-dfasd
+The simplest of the three package build tools, and what the other tools
+are built on, is `dpk-buildpackage`. To build:
 
+    # dpkg-buildpackage --unsigned-source --unsigned-changes
+
+Pros:
+
+* Simple to run.
+
+* Allows the changing of source code without git commits or quilt
+  patches(??) (with native packages only??).
+
+Cons:
+
+* Requires all the packages listed in the Build-Depends field of the
+  control file to be installed on the system where run.
+
+### Using `pbuild`
+
+Later.
 
 ## `debhelper`
 
