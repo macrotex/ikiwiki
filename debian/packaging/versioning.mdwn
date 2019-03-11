@@ -1,0 +1,37 @@
+[[!toc levels=3]]
+
+# Debian package versioning
+
+## Introduction
+
+Start here: [section 5.6.12 of the Debian Policy
+Manual](https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-version)
+or the man page for `deb-version`.
+
+Short answer: the package version is
+
+    upstream_version[-debian_revision]
+
+A package without a debian revision number indicates the package was
+written to be a Debian package.
+
+## Examples
+
+slapd (2.4.44+dfsg-5+deb9u2): The upstream version is `2.4.44+dfsg` and
+the debian revision is `5+deb9u2`.
+
+linux-base (4.5~deb8u1): The upstream version is `4.5~deb8u1` and there is
+NO debian revision number.
+
+The first number in the debian revision indicates how often the debian
+package has been revised, starting over at `1` when the upstream version
+changes. The `+deb9u2` indicates that the Debian packaging itself has not
+changed, but that a patch has been added to the Debian package build so
+address some security or other software issue.
+
+
+## Notes
+
+For an exaplanation of `+dfsg` see [What does "dfsg" or "ds" in the
+version string
+mean?"](https://wiki.debian.org/DebianMentorsFaq#What_does_.2BIBw-dfsg.2BIB0_or_.2BIBw-ds.2BIB0_in_the_version_string_mean.3F).

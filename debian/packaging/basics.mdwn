@@ -8,13 +8,13 @@ Most Debian software is derived from some non-Debian software project
 (e.g., Apache, OpenLDAP, etc.). We refer to these files as the _upstream
 software_ or _upstream dstribution_. The upstream software is usually
 supplied as a `.tar.gz` tarball. Usually (but not always) this software
-has no special support for Debian or Debian package building. It is the
+has no special support for Debian package building. It is the
 job of Debian packagers to take this upstream distribution and turn it
 into a Debian package.
 
 The Debian packaging tools expect the upstream distribution tarball to
 have a name in the format `package-version.tar.gz`. The `package-version`
-part is described in the Package Version section.
+part is described in [package version numbering](../versioning).
 
 ## Debian binary package
 
@@ -27,7 +27,7 @@ A Debian binary package is an `ar` archive containing these files:
 
 * `data.tar.xz`: the files to install on the Debian system
 
-* `control.tar.gz`: isntructions on how to install the files including the
+* `control.tar.gz`: instructions on how to install the files including the
 package `control` file, other package dependencies, and optional scripts
 used during package install and removal
 
@@ -60,7 +60,7 @@ file, rather, a source package consists of three files:
 
 * The `.dsc` file ("desription of the source code"
 
-* (optional) a file containing changes to the upstream source; this usally
+* (optional) a file containing changes to the upstream source; this usually
   exists and, for non-native packages, ends in `.debian.tar.gz`.
 
 ### The `.dsc` file
@@ -79,4 +79,4 @@ directory containng the Debian package files and run
     dpkg-source --build .
 
 Typically you do _not_ run this command explicitly, rather, one of the
-[Debian package tools](??) calls this command itself.
+[Debian package tools](../hierarchy) calls this command itself.

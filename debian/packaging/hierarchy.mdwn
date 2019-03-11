@@ -1,3 +1,6 @@
+[[!toc levels=3]]
+
+
 # The Debian Packaging Tools Hierarchy
 
 From low-level to high-level:
@@ -22,6 +25,21 @@ From low-level to high-level:
                                   |                |
                                   |                |
                                pbuild        gbp buildpackage
+
+
+## Quick Start
+
+There are three main ways to build a Debian package:
+
+1. Use `dpk-buildpackage`.
+
+1. Use `pbuild`.
+
+1. Use `gbp buildpackage`.
+
+### Using `dpk-buildpackage`.
+
+dfasd
 
 
 ## `debhelper`

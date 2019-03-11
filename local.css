@@ -20,12 +20,24 @@ h5 { font-size: 1em; font-weight: normal; font-style: italic; }
 
 #content  { margin: 10px; background: #fff; }
 
-
+/* For an in-paragraph element */
 code {
     font-weight: bold;
     background-color: #DDD;
     padding-left: 0.20em;
     padding-right: 0.20em;
+}
+
+/* For the displayed code */
+pre code {
+    font-weight: bold;
+    background-color: #DDD;
+    display: block;
+}
+
+blockquote {
+    display: block;
+    background-color: #ffffcc;
 }
 
 .header
