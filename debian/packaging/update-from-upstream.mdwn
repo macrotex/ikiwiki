@@ -5,17 +5,19 @@
 ## Introduction
 
 Here we describe how to take an existing Debian package and
-update it with new upstream source. We make these assumptions:
+update it with new upstream source.
 
 ## Assumptions
+
+We make these assumptions:
 
 1. The Debian package already exists in the official Debian repository.
 
 1. You have the tools installed necessary to run `gbp buildpackage`.
 
-1. The new upstream sources do *not* interfere with any Debian patches. If
-this is not true, you will need to do some extra work; see ??? for how to
-handle this case.
+1. The new upstream sources do *not* interfere with any Debian patches in
+the existing Debian package. If this is not true, you will need to do some
+extra work; see ??? for how to handle this case.
 
 ## Procedure
 
@@ -23,11 +25,11 @@ handle this case.
 be a file in `tar.gz` format (a "tarball").
 
 1. Get the name of the source package. This is *not* always the same as
-the name of the binary package. To find the name of the source, you can
+the name of the binary package. To find the name of the source you can
 search for the package at the [Debian packages
 site](https://www.debian.org/distrib/packages).
 
-1. Download Debian package
+1. Download the Debian package
 
         $ apt-get source -t stable -d <source-package-name>
 
@@ -42,8 +44,9 @@ site](https://www.debian.org/distrib/packages).
 1. You should see three branches: `master`, `upstream`, and
 `pristine-tar`. The `upstream` branch is the files from the software
 vendor. The `master` branch is the same as `master` except it contains an
-extra directory, the `debian/` directory. To see that this is true, run
-`git diff --name-only master..upstream`.
+extra directory: the `debian/` directory. To see that the two branches
+only differ by the `debian/` dirctory run `git diff --name-only
+master..upstream`.
 
 1. Import the most recent release. You will need to know the upstream
 release number.
@@ -52,7 +55,7 @@ release number.
 
 1. To see the changes this import made, do a `git log -p`.
 
-1. Update changelog:
+1. Update `debian/changelog`:
 
         $ gbp dch --release
         $ git commit -a -m "new release"
