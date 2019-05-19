@@ -3,3 +3,4 @@
 * [Debian packaging basics and definitions](basics)
 * [The tools hierarchy](hierarchy)
 * [Debian versions](versioning)
+* [Updating a pcakge with new upstream release](update-from-upstream)
