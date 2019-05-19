@@ -10,3 +10,6 @@ steps:
 # Copy output from /ikiwiki into the GCS bucket.
 - name: gcr.io/cloud-builders/gsutil
   args: ["-m", "rsync", "-r", "-c", "-d", "/ikiwiki", "gs://ikiwiki-gcp.lewenberg.com"]
+  volumes:
+  - name: 'vol1'
+    path: '/ikiwiki'
