@@ -34,7 +34,7 @@ address some security or other type of bug.
 The package installation system when upgrading packages choose to
 overwrite an older version of a package with a newer package. In this case
 "newer" means the version number is larger. Thus, how versions are
-compared is compared is important. To compare two versions, you can use
+compared is important. To compare two versions, you can use
 
     dpkg --compare-versions 11a lt 100a && echo true
 
