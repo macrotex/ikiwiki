@@ -7,7 +7,7 @@
 geographic area". Zones in the same region have very fast network
 interconnects. Examples: `us-central1`, `us-west2`, `asia-south1`,
 
-*Multi-region*: a geographic area containing more than one region. Example:
-us, europe, australia.
+*Multi-region*: a geographic area containing more than one
+region. Example: us, europe, australia.
 
-*Global*: everything. Example: the S3 service is global.
+*Global*: everything. Example: virtual priviate clouds (VPCs) are global.
