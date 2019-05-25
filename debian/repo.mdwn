@@ -1,7 +1,9 @@
 [[!toc levels=3]]
-# How Debian Repositories work
+[[!meta title="How Debian Repositories work"]]
 
-Sources of much of the information on this page:
+# Introduction
+
+Sources for most of the information on this page:
 
 * [Debian package management (official page)](https://www.debian.org/doc/manuals/debian-reference/ch02.en.html)
 * [DebianReleases (official page)](https://wiki.debian.org/DebianReleases)
@@ -9,7 +11,7 @@ Sources of much of the information on this page:
 * [Debian repository Format](https://wiki.debian.org/DebianRepository/Format)
 * [Debian Glossary](https://wiki.debian.org/Glossary)
 
-## Nomenclature
+# Nomenclature
 
 * **repository**: a searchable collection of packages.
 
@@ -17,7 +19,7 @@ Sources of much of the information on this page:
 only when refergin to a searchable and downloadable collection of Debian packages
 that contains a "dists/" directory at the top level.
 
-## Suites
+# Suites
 
 A **suite** is ["a repository holding one particular "branch" of Debian's
 development process"](https://wiki.debian.org/Glossary#suite). A suite
@@ -57,7 +59,7 @@ meant to be a complete operating system, e.g., `stable-proposed-updates`,
 `testing-updates`.
 
 
-## Distributions
+# Distributions
 
 In the context of Debian package repositories,
 the terms "distribution" and "suite" are used interchangably.
@@ -68,12 +70,12 @@ From [Glossary](https://wiki.debian.org/Glossary#distribution):
 > https://deb.debian.org/debian/dists/experimental/ alongside all the
 > other dists.
 
-## Releases
+# Releases
 
 A Debian *release* is a distribution that has been or is going to be
 released.
 
-### Release version
+## Release version
 
 Each release has a major **version** number and a minor version
 number. For example, Debian "wheezy" has major version 7. Every version
@@ -83,7 +85,7 @@ of its release, the current release of Debian was version "7.0".
 
 New releases come out roughly every two years.
 
-### Release codename
+## Release codename
 
 Every Debian release has a *codename* associated with the major version:
 
@@ -171,7 +173,7 @@ different archive (e.g., `http://security.debian.org/`).
 * sid: all the active development of new Debian software and packaging
 happens here.
 
-## The Archive
+# The Archive
 
 Most Debian repositories consist of at least one, but sometimes more than
 one, *archive*. The most common archive is "debian" but there is also
@@ -187,7 +189,7 @@ Some examples:
     http://archive.debian.org/debian/          (Debian's old release archive)
 
 
-## Structure of a Debian archive
+# Structure of a Debian archive
 
 Each archive contains a variety of files and directories. The most
 important are
@@ -196,7 +198,7 @@ important are
     URL/<archive>/pool/
     URL/<archive>/project/
 
-### The `dists` directory
+## The `dists` directory
 
 The `dists` directory contains a set of files and directories for each
 Debian distribution. For example, here are some of the distributions in
@@ -213,7 +215,7 @@ the main Debian mirror:
     ...
 
 
-### Files in a distribution
+## Files in a distribution
 
 Each distribution contains several files and directories. The most
 important of these are
@@ -224,7 +226,7 @@ important of these are
     main/
     non-free/
 
-#### The `Release` file
+### The `Release` file
 
 This file contains information about the packages for this suite. The
 first few lines are fields:
@@ -241,7 +243,7 @@ Each Release (or InRelease) file has a `Valid_Until` except for the
 current point releases as these are considered production releases and
 hence do not expire.
 
-### Security
+## Security
 
 When a Debian client wants to get a package from a Debian repository, it
 starts with the repository URL. It then appends the archive name. Next, it
@@ -255,7 +257,7 @@ then runs the equivalent to
 
 
 
-### The `pool` directory
+## The `pool` directory
 
 The packages themselves are in the `pool` directory.
 
@@ -263,7 +265,7 @@ The packages themselves are in the `pool` directory.
 
 Example.
 
-## How to browse the Debian package repository
+# How to browse the Debian package repository
 
 1. Look at the sources.list file
 
