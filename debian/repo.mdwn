@@ -1,0 +1,282 @@
+[[!toc levels=3]]
+# How Debian Repositories work
+
+Sources of much of the information on this page:
+
+* [Debian package management (official page)](https://www.debian.org/doc/manuals/debian-reference/ch02.en.html)
+* [DebianReleases (official page)](https://wiki.debian.org/DebianReleases)
+  (scroll down to the bottom for a very useful graph)
+* [Debian repository Format](https://wiki.debian.org/DebianRepository/Format)
+* [Debian Glossary](https://wiki.debian.org/Glossary)
+
+## Nomenclature
+
+* **repository**: a searchable collection of packages.
+
+* **archive**: synonym for repository; in this document we use "archive"
+only when refergin to a searchable and downloadable collection of Debian packages
+that contains a "dists/" directory at the top level.
+
+## Suites
+
+A **suite** is ["a repository holding one particular "branch" of Debian's
+development process"](https://wiki.debian.org/Glossary#suite). A suite
+undergoes changes as packages move in and out. The suite gets **names**
+assigned to it and these names can change over time.
+
+Here is an example:
+
+    BEFORE NEW MAJOR RELEASE
+    ------------------
+    suite-A   testing, buster
+    suite-B   stable,  stretch, version-9.9
+
+    AFTER NEW MAJOR RELEASE
+    ------------------
+    suite-A   testing,   bullseye
+    suite-A'  stable,    buster,  version-10.0
+    suite-B   oldstable, stretch, version-9.9
+    Note: suite-A' is a copy of suite-A on new release day
+
+    AFTER NEW POINT RELEASE
+    ------------------
+    suite-A   testing,   bullseye
+    suite-A'  stable,    buster,  version-10.1
+    suite-B   oldstable, stretch, version-9
+
+Be aware that most suites undergo changes all the time, so, for example,
+`suite-A` under `AFTER NEW MAJOR RELEASE` will have different contents
+than `suite-A` under `AFTER NEW POINT RELEASE`.
+
+Some suites will stop changing, most notably, those suites associated with
+old releases.
+
+Some suites are sets of a packages that are complete operating systems,
+e.g., `stable`, `sid`, etc., while some suites are sets of packages nt
+meant to be a complete operating system, e.g., `stable-proposed-updates`,
+`testing-updates`.
+
+
+## Distributions
+
+In the context of Debian package repositories,
+the terms "distribution" and "suite" are used interchangably.
+From [Glossary](https://wiki.debian.org/Glossary#distribution):
+
+> Distribution (distro, dist): [...] Used more generally (e.g. in
+> sources.list(5)) as a synonym for suite; hence source URLs which put
+> https://deb.debian.org/debian/dists/experimental/ alongside all the
+> other dists.
+
+## Releases
+
+A Debian *release* is a distribution that has been or is going to be
+released.
+
+### Release version
+
+Each release has a major **version** number and a minor version
+number. For example, Debian "wheezy" has major version 7. Every version
+(starting with "wheezy") also has a minor version number. When "wheezy"
+was released its version minor version number was "0". Thus, at the time
+of its release, the current release of Debian was version "7.0".
+
+New releases come out roughly every two years.
+
+### Release codename
+
+Every Debian release has a *codename* associated with the major version:
+
+    VERSION  CODENAME
+          7  wheezy
+          8  jessie
+          9  stretch
+         10  buster
+         11  bullseye
+          *  sid
+
+We will usually refer to a specific Debian release by codename (thus
+"Debian stretch").
+
+The "sid" codename points to the development versions of packages that are
+being prepared for the next release.
+
+See also the graph at the bottom of the [Debian Releases
+page](https://wiki.debian.org/DebianReleases).
+
+## Release "suite name"
+
+Several releases also have names that indicate how close they are to the most recently
+released version.
+
+* stable:    points to the current supported release.
+
+* oldstable: points to the PREVIOUS supported version.
+
+* oldoldstable: points to the PREVIOUS to the PREVIOUS supported
+release.
+
+* testing:   points to the next current development state of the next
+stable Debian distribution.
+
+* unstable:  an alias for "sid"
+
+* experimental:  points at the "experimental" distribution.
+
+At the time of this writing this translated to:
+
+    VERSION  CODENAME    SUITE NAME
+          7  wheezy      oldoldstable
+          8  jessie      oldstable
+          9  stretch     stable
+         10  buster      testing
+         11  bullseye
+          *  sid         sid
+
+When buster is officially released, the above will change to:
+
+    VERSION  CODENAME    SUITE NAME
+          7  wheezy
+          8  jessie      oldoldstable
+          9  stretch     oldstable
+         10  buster      stable
+         11  bullseye    testing
+          *  sid         sid
+
+
+## Notable distributions in each release
+
+Each release consists of several sets of Debian packages called
+"distributions":
+
+* current release (e.g., "stretch"):  current point release
+
+* proposed updates (e.g., "stretch-proposed-updates"): packages being
+prepared for next point release
+
+* updates (e.g., "stretch-updates"): updates for users who want to install
+on their systems before the next point release is made, such as updates to
+virus scanners and timezone data; all packages from stable-updates will be
+included in point releases
+
+* backports (e.g., "stretch-backports"): packages for a later version of
+software than that in the current release.
+
+* security updates (e.g., "stretch/updates"): security updates that need a
+timely release. Note that usually these packages are served from a
+different archive (e.g., `http://security.debian.org/`).
+
+* experimental: packages in pre-alpha.
+
+* sid: all the active development of new Debian software and packaging
+happens here.
+
+## The Archive
+
+Most Debian repositories consist of at least one, but sometimes more than
+one, *archive*. The most common archive is "debian" but there is also
+"debian-local", "ubuntu", etc. To reach these archives a URL like the
+following is usually used:
+
+    URL/<archive>/
+
+Some examples:
+
+    http://ftp.debian.org/debian/              (Debian's main archive)
+    http://security.debian.org/debian-security (Debian's security archive)
+    http://archive.debian.org/debian/          (Debian's old release archive)
+
+
+## Structure of a Debian archive
+
+Each archive contains a variety of files and directories. The most
+important are
+
+    URL/<archive>/dists/
+    URL/<archive>/pool/
+    URL/<archive>/project/
+
+### The `dists` directory
+
+The `dists` directory contains a set of files and directories for each
+Debian distribution. For example, here are some of the distributions in
+the main Debian mirror:
+
+
+    http://ftp.us.debian.org/debian/              (archive root)
+    http://ftp.us.debian.org/debian/dists/        (all the distributions)
+    http://ftp.us.debian.org/debian/dists/experimental/
+    http://ftp.us.debian.org/debian/dists/stretch-backports/
+    http://ftp.us.debian.org/debian/dists/stretch-proposed-updates/
+    http://ftp.us.debian.org/debian/dists/stretch-updates/
+    http://ftp.us.debian.org/debian/dists/stretch/
+    ...
+
+
+### Files in a distribution
+
+Each distribution contains several files and directories. The most
+important of these are
+
+    Release
+    Release.gpg
+    contrib/
+    main/
+    non-free/
+
+#### The `Release` file
+
+This file contains information about the packages for this suite. The
+first few lines are fields:
+
+    Suite       (e.g., stable, oldstable-updates)
+    Version     (e.g., 8.5) [not always present]
+    Codename    (e.g., jessie, wheezy-updates)
+    Valid-Until (a date; see below)
+
+The rest of this file is a list of files in the directory along with
+their checksums.
+
+Each Release (or InRelease) file has a `Valid_Until` except for the
+current point releases as these are considered production releases and
+hence do not expire.
+
+### Security
+
+When a Debian client wants to get a package from a Debian repository, it
+starts with the repository URL. It then appends the archive name. Next, it
+indicates a suite. This gets it inside of one of the `dists/` directories.
+
+The client should then download the `Release` and `Release.gpg` file. It
+then runs the equivalent to
+
+    gpg --verify Release.gpg Release
+
+
+
+
+### The `pool` directory
+
+The packages themselves are in the `pool` directory.
+
+
+
+Example.
+
+## How to browse the Debian package repository
+
+1. Look at the sources.list file
+
+        cat /etc/apt/sources.list
+
+1. You will see something like this:
+
+        # The main Debian archive and source tree.
+        deb     http://ftp.us.debian.org/debian stretch main non-free contrib
+        deb-src http://ftp.us.debian.org/debian stretch main non-free contrib
+
+1. You can browse the repo by taking one of the above URL's, appending
+`dists`, and then appending the distribution (in this case `stretch`), and
+then appending one of the "components" (i.e., `main`, `non-free`, etc.).
+
+        http://ftp.us.debian.org/debian/dists/stretch/contrib/
