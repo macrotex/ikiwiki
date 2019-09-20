@@ -1,0 +1,168 @@
+# PostgeSQL Basics
+
+
+# Comand Cheat Sheet
+
+    \l         list all databases
+    \conninfo  list current connection info including username and database
+    \du        list all roles
+    \dn+       list all (non-system) schema in the CURRENT database
+    \dn+ *.*   list all schema in the CURRENT database
+    \dt        list all non-system tables in the CURRENT database
+    \dt *.*    list all tables in the CURRENT database
+
+    # List ALL databases along with their identifying number:
+    SELECT datname, datdba FROM pg_database ;
+
+# PostgreSQL Objects
+
+Picture of PostgreSQL objects:
+
+    database cluster
+         |
+         |
+      database
+         |
+         |
+       schema
+         |
+         |
+       table
+
+## Database Cluster
+
+Once PostgreSQL has been installed there is a single _database cluster_
+which contains all the individual databases. The _database cluster_
+contains several default databases:
+
+    postgres
+    template0
+    template1
+
+## Database
+
+(See also [??](https://www.postgresql.org/docs/current/manage-ag-overview.html).
+A _database_ is a "named collection of SQL objects". To list all the
+databases use the `\l` command.
+
+## Schema
+
+From the [documentation](https://www.postgresql.org/docs/current/ddl-schemas.html):
+
+> A database contains one or more named schemas, which in turn contain tables.
+
+A schema acts as a namespace inside a database.
+
+Example: database `mydb` contains the two schema `schema1` and
+`schema1`. These two tables are independent and unrelated:
+`schema1.accounts` and `schema2.accounts`.
+
+To list the schema in a database:
+
+    postgres=> \dn+
+
+
+### The `public` schema
+
+Every new database contains a schema called `public`. This acts as the
+default schema. Every table created without an explicit schema is
+placed inside the `public` schema.
+
+
+### The schema search path
+
+The schema search path is used whenever referring to an object that lives
+inside a schema (e.g., a table) but the schema itself is not
+specified. Thus, if you submit a CREATE TABLE command but do not mention
+the schema, the search path will determine which schema to use.
+
+To see the search path:
+
+    postgres=> SHOW search_path;
+     search_path
+    --------------
+     "$user",public
+
+Schemas in the search path that do not exist are skipped.
+
+### Why schema instead of different databases?
+
+???
+
+
+## System catalogs
+
+The system catalogs are tables that belong to the `pg_catalog`
+schema. These contain database metadata, for example, information about
+the databases schema, tables, etc.
+
+Note that there are "tables" that start with `pg_` that are *global*. That
+is, they exist in every database but their values are the same for all
+databases (think of the copy in each database as a link to a single global
+table). Example: `pg_databases`.
+
+## Connecting
+
+From the [documentation](https://www.postgresql.org/docs/current/manage-ag-overview.html):
+
+> When connecting to the database server, a client must specify in its
+> connection request the name of the database it wants to connect to. It is
+> not possible to access more than one database per connection. However, an
+> application is not restricted in the number of connections it opens to the
+> same or other databases. Databases are physically separated and access
+> control is managed at the connection level.
+
+Thus, it is not possible to be connected to a PostgreSQL instance without
+being "attached" to a specific database.
+
+## Users and Roles
+
+Roles serve as users and groups. From the
+[documentation](https://www.postgresql.org/docs/current/user-manag.html):
+
+> PostgreSQL manages database access permissions using the concept of
+> roles. A role can be thought of as either a database user, or a group of
+> database users, depending on how the role is set up. Roles can own
+> database objects (for example, tables and functions) and can assign
+> privileges on those objects to other roles to control who has access to
+> which objects. Furthermore, it is possible to grant membership in a role
+> to another role, thus allowing the member role to use privileges assigned
+> to another role.
+
+Note that roles are "global", that is, they do not belong to any
+particular database; from the
+[documentation](https://www.postgresql.org/docs/current/ddl-schemas.html):
+
+> Users and groups of users are shared across the entire cluster, but no
+> other data is shared across databases.
+
+### Privileges
+
+Roles can do things with/to database objects if they have the _privilege_
+to do it. Usually, a role must be explicitly granted a privilege to be
+able to do something. Some of the more important privileges:
+
+* `USAGE`: granting a role the USAGE privilege on a schema allows that
+role to list the objects in that schema. Think of this like a Unix user
+(role) with read permission to a directory (schema).
+
+* `CONNECT`: allows the role to connect to a database.
+
+
+If you grant a role a privilege on a schema, then that privilege is
+granted to every object in the schema. This allows schemas to act as
+permissons proxies. Even though normally a role must be granted a
+privilige, there is an important exceoption. From the
+[documentation](https://www.postgresql.org/docs/current/ddl-schemas.html):
+
+> ... by default, everyone has CREATE and USAGE privileges on the schema
+> public. This allows all users that are able to connect to a given
+> database to create objects in its public schema.
+
+Thus, if you add objects to the `public` schema _every_ role has access to
+those objects.
+
+The [documentation](https://www.postgresql.org/docs/current/ddl-schemas.html) further says:
+
+> Some usage patterns call for revoking that privilege:
+> REVOKE CREATE ON SCHEMA public FROM PUBLIC;
