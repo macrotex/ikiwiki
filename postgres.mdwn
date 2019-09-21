@@ -1,5 +1,8 @@
 # PostgeSQL Basics
 
+A quick introduction to PostgreSQL database objects intended for those
+who already have some relational database experience.
+
 
 # Comand Cheat Sheet
 
@@ -16,7 +19,8 @@
 
 # PostgreSQL Objects
 
-Picture of PostgreSQL objects:
+Diagram of PostgreSQL objects (objects lower down are contained inthe
+objects higher up):
 
     database cluster
          |
@@ -32,7 +36,7 @@ Picture of PostgreSQL objects:
 ## Database Cluster
 
 Once PostgreSQL has been installed there is a single _database cluster_
-which contains all the individual databases. The _database cluster_
+which contains all the individual databases. The database cluster
 contains several default databases:
 
     postgres
@@ -41,7 +45,8 @@ contains several default databases:
 
 ## Database
 
-(See also [??](https://www.postgresql.org/docs/current/manage-ag-overview.html).
+(See also [the PostgreSQL
+documentation](https://www.postgresql.org/docs/current/manage-ag-overview.html).
 A _database_ is a "named collection of SQL objects". To list all the
 databases use the `\l` command.
 
@@ -57,7 +62,7 @@ Example: database `mydb` contains the two schema `schema1` and
 `schema1`. These two tables are independent and unrelated:
 `schema1.accounts` and `schema2.accounts`.
 
-To list the schema in a database:
+To list all the schema in the current database:
 
     postgres=> \dn+
 
@@ -96,7 +101,7 @@ The system catalogs are tables that belong to the `pg_catalog`
 schema. These contain database metadata, for example, information about
 the databases schema, tables, etc.
 
-Note that there are "tables" that start with `pg_` that are *global*. That
+Note that there are tables that start with `pg_` that are *global*. That
 is, they exist in every database but their values are the same for all
 databases (think of the copy in each database as a link to a single global
 table). Example: `pg_databases`.
@@ -139,7 +144,7 @@ particular database; from the
 ### Privileges
 
 Roles can do things with/to database objects if they have the _privilege_
-to do it. Usually, a role must be explicitly granted a privilege to be
+to do so. Usually, a role must be explicitly granted a privilege to be
 able to do something. Some of the more important privileges:
 
 * `USAGE`: granting a role the USAGE privilege on a schema allows that
@@ -152,7 +157,7 @@ role to list the objects in that schema. Think of this like a Unix user
 If you grant a role a privilege on a schema, then that privilege is
 granted to every object in the schema. This allows schemas to act as
 permissons proxies. Even though normally a role must be granted a
-privilige, there is an important exceoption. From the
+privilege, there is an important exceoption. From the
 [documentation](https://www.postgresql.org/docs/current/ddl-schemas.html):
 
 > ... by default, everyone has CREATE and USAGE privileges on the schema
