@@ -9,7 +9,7 @@ steps:
 
 # Create a gzipped tarball of the output in /ikwiki/files.tar.gz
 - name: busybox
-  args: ["tar", "-cz", "-f", "/ikwiki/files.tar.gz", "/ikiwiki"]
+  args: ["tar", "-cz", "-f", "/ikiwiki/files.tar.gz", "/ikiwiki"]
   volumes:
   - name: 'vol1'
     path: '/ikiwiki'
