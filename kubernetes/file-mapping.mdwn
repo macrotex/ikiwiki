@@ -105,16 +105,6 @@ and the additional file `cm1.txt` from the ConfigMap is **added**.
 
 1. Install `jq` (JSON query utility).
 
-1. Instantiate the pod:
-
-        $ kubectl -f alpine.yml
-        $ kubectl describe pod file-mapping
-
-1. See the files in `/etc/ssl/misc`:
-
-        $ k exec file-mapping ls /etc/ssl/misc
-
-
 1. Create a `file-mapping` Kubernetes namespace and set it as the default:
 
         $ k apply -f namespace.yml
