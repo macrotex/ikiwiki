@@ -7,9 +7,17 @@ steps:
   - name: 'vol1'
     path: '/ikiwiki'
 
+# Create a gzipped tarball of the output in /ikwiki/files.tar.gz
+- name: busybox
+  args: ["tar", "-cz", "-f", "/ikwiki/files.tar.gz", "/ikiwiki"]
+  volumes:
+  - name: 'vol1'
+    path: '/ikiwiki'
+
 # Copy output from /ikiwiki into the GCS bucket.
 - name: gcr.io/cloud-builders/gsutil
   args: ["-m", "rsync", "-r", "-c", "-d", "/ikiwiki", "gs://ikiwiki.lewenberg.com"]
   volumes:
   - name: 'vol1'
     path: '/ikiwiki'
+
