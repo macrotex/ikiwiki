@@ -19,7 +19,7 @@ who already have some relational database experience.
 
 # PostgreSQL Objects
 
-Diagram of PostgreSQL objects (objects lower down are contained inthe
+Diagram of PostgreSQL objects (objects lower down are contained in the
 objects higher up):
 
     database cluster
@@ -46,7 +46,7 @@ contains several default databases:
 ## Database
 
 (See also [the PostgreSQL
-documentation](https://www.postgresql.org/docs/current/manage-ag-overview.html).
+documentation](https://www.postgresql.org/docs/current/manage-ag-overview.html).)
 A _database_ is a "named collection of SQL objects". To list all the
 databases use the `\l` command.
 
@@ -58,7 +58,7 @@ From the [documentation](https://www.postgresql.org/docs/current/ddl-schemas.htm
 
 A schema acts as a namespace inside a database.
 
-Example: database `mydb` contains the two schema `schema1` and
+Example: database `mydb` contains the two schemas `schema1` and
 `schema1`. These two tables are independent and unrelated:
 `schema1.accounts` and `schema2.accounts`.
 
@@ -157,7 +157,7 @@ role to list the objects in that schema. Think of this like a Unix user
 If you grant a role a privilege on a schema, then that privilege is
 granted to every object in the schema. This allows schemas to act as
 permissons proxies. Even though normally a role must be granted a
-privilege, there is an important exceoption. From the
+privilege, there is an important exception. From the
 [documentation](https://www.postgresql.org/docs/current/ddl-schemas.html):
 
 > ... by default, everyone has CREATE and USAGE privileges on the schema

@@ -70,6 +70,14 @@ for more details.
 
 ## Notes
 
-For an explanation of `+dfsg` see [What does "dfsg" or "ds" in the
-version string
-mean?](https://wiki.debian.org/DebianMentorsFaq#What_does_.2BIBw-dfsg.2BIB0_or_.2BIBw-ds.2BIB0_in_the_version_string_mean.3F).
+You may see the string `+dfsg` added to the end of version string.  From
+[What does "dfsg" or "ds" in the version string
+mean?](https://wiki.debian.org/DebianMentorsFaq#What_does_.2BIBw-dfsg.2BIB0_or_.2BIBw-ds.2BIB0_in_the_version_string_mean.3F):
+
+> "+dfsg.N" and '+ds.N" are a conventional way of extending a version
+> string, when the Debian package's upstream source tarball is actually
+> different from the source released upstream. The former is used when
+> upstream's source release contains elements that do not satisfy the Debian
+> Free Software Guildelines (DFSG) and hence may not be distributed as
+> source in the Debian system, the latter (standing for "Debian
+> Source') is used when the modification are for other non-DFSG reasons.

@@ -8,7 +8,7 @@ Sources for most of the information on this page:
 * [Debian package management (official page)](https://www.debian.org/doc/manuals/debian-reference/ch02.en.html)
 * [DebianReleases (official page)](https://wiki.debian.org/DebianReleases)
   (scroll down to the bottom for a very useful graph)
-* [Debian repository Format](https://wiki.debian.org/DebianRepository/Format)
+* [Debian Repository Format](https://wiki.debian.org/DebianRepository/Format)
 * [Debian Glossary](https://wiki.debian.org/Glossary)
 
 # Nomenclature
@@ -16,7 +16,7 @@ Sources for most of the information on this page:
 * **repository**: a searchable collection of packages.
 
 * **archive**: synonym for repository; in this document we use "archive"
-only when refergin to a searchable and downloadable collection of Debian packages
+only when refering to a searchable and downloadable collection of Debian packages
 that contains a "dists/" directory at the top level.
 
 # Suites
@@ -54,7 +54,7 @@ Some suites will stop changing, most notably, those suites associated with
 old releases.
 
 Some suites are sets of a packages that are complete operating systems,
-e.g., `stable`, `sid`, etc., while some suites are sets of packages nt
+e.g., `stable`, `sid`, etc., while some suites are sets of packages not
 meant to be a complete operating system, e.g., `stable-proposed-updates`,
 `testing-updates`.
 
