@@ -1,0 +1,19 @@
+[[!toc levels=3]]
+
+# Compiling Debian packages
+
+## Compiling a non-native package
+
+A [non-native Debian package](../basics) will have source/format set to
+`quilt (3.0)`. To compile:
+
+    $ cd package-directory/
+    $ dpkg-buildpackage -us -uc
+        or
+    $ pbuild
+        or
+    $ gbp buildpackage
+
+For any of these methods to work, the upstream tarball must be in the
+parent directory. If it is not, you will an error like this:
+
