@@ -5,3 +5,6 @@
 * [Debian](debian)
 * [GCP](gcp)
 * [Git](git)
+* [GPG](gpg)
+* [Kubernetes](kubernetes)
+* [PostgreSQL](postgres)

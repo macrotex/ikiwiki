@@ -34,7 +34,7 @@ address some security or other type of bug.
 The package installation system when upgrading packages choose to
 overwrite an older version of a package with a newer package. In this case
 "newer" means the version number is larger. Thus, how versions are
-compared is compared is important. To compare two versions, you can use
+compared is important. To compare two versions, you can use
 
     dpkg --compare-versions 11a lt 100a && echo true
 
@@ -53,12 +53,31 @@ easiest to see with an example:
 
     1.2-4~a~a < 1.2-4~a < 1.2-4~b < 1.2-4 < 1.2-5~a < 1.2-5 < 1.3-1
 
+In particular, this is useful in when bulding "temporary" backports. This
+is best illustrated with an example. Assume the stable release is buster
+(10) and that the package `mypackage` has version `6-1` in buster. Version
+`8-1` is in `sid` and you want to use this version on your buster
+servers. So you build the package for buster and give it the version
+`8-1~bp10+1`. You then install this version on all of your buster
+servers. When it is time to upgrade your servers to bullseye (11), if
+version `8-1` is (still) the current version in bullseye, then bullseye's
+version will take precedence over version `8-1~bp10+1` ensuring that you
+get the official Debian package installed.
+
 See [section 5.6.12 of the Debian Policy
 Manual](https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-version)
 for more details.
 
 ## Notes
 
-For an explanation of `+dfsg` see [What does "dfsg" or "ds" in the
-version string
-mean?](https://wiki.debian.org/DebianMentorsFaq#What_does_.2BIBw-dfsg.2BIB0_or_.2BIBw-ds.2BIB0_in_the_version_string_mean.3F).
+You may see the string `+dfsg` added to the end of version string.  From
+[What does "dfsg" or "ds" in the version string
+mean?](https://wiki.debian.org/DebianMentorsFaq#What_does_.2BIBw-dfsg.2BIB0_or_.2BIBw-ds.2BIB0_in_the_version_string_mean.3F):
+
+> "+dfsg.N" and '+ds.N" are a conventional way of extending a version
+> string, when the Debian package's upstream source tarball is actually
+> different from the source released upstream. The former is used when
+> upstream's source release contains elements that do not satisfy the Debian
+> Free Software Guildelines (DFSG) and hence may not be distributed as
+> source in the Debian system, the latter (standing for "Debian
+> Source') is used when the modification are for other non-DFSG reasons.

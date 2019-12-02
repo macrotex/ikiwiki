@@ -1,0 +1,124 @@
+[[!toc levels=2]]
+
+# GPG cheat sheet
+
+# Key Management
+
+## List all of your (secret) keys
+
+    gpg --list-secret-keys
+
+## List all of the public keys you have imported
+
+    gpg --list-keys
+
+## List all the keys in a GPG file
+
+    # GPG version 1.x
+    gpg file.gpg
+    gpg --keyid-format 0xlong file.gpg
+
+    # GPG version 2.x
+    ????
+
+## Delete a key-pair
+
+Delete the private key first, then the public key:
+
+    gpg --delete-secret-key "User Name"
+    gpg --delete-key "User Name"
+
+## Delete a public key
+
+    gpg --delete-key "name of key"
+
+## Import a public key
+
+    gpg --import pubkeyfile
+
+## Import a public/private key-pair
+
+    gpg --import secretkeyfile
+
+## Export a public key
+
+    gpg --armor --export 573BEE0C
+
+## List the trusted keys in a GPG "trusted DB" file:
+
+    gpg ???
+
+## Convert a GPG file in ASCII to binary
+
+    gpg --dearmor < filename.txt > filename.bin
+
+## Remove a key from a GPG "database"
+
+    gpg --trustdb-name file ???
+
+## Create a *new* key-pair:
+
+    gpg --gen-key
+
+# Encrypt
+
+## Encrypt a document with another user's public key
+
+To encrypt a document with another `joeuser@stanford.edu`'s public key
+(the key must already be in your GPG key store):
+
+    cat plain.txt | gpg --output encrypted.gpg -a --encrypt --recipient joeuser@stanford.edu
+
+## Encrypt a document with a password
+
+    gpg -c --armor --cipher-algo AES256 private-file.txt
+
+# Signatures
+
+## Sign a document (ASCII)
+
+    gpg --clearsign document_to_be_signed
+
+## Sign a document using key other than the default
+
+    gpg --local-user <key's uid> --clearsign document_to_be_signed
+
+## Verifiy a signed document
+
+    gpg --verify document_to_be_verified
+
+## Advanced
+To verify signatures GPG needs to know where to find the public keys of
+the signers. So, unless the public keys are in your default location
+(usually $HOME/.gnupg/trustedkeys.gpg), you need to indicate that file of
+trusted public keys.
+
+### To verify that `Release.gpg` is the correct signature for file `Release`, do this:
+
+    gpg  --keyring /var/lib/debmirror/trustedkeys.gpg --verify Release.gpg Release
+    gpgv --keyring /var/lib/debmirror/trustedkeys.gpg Release.gpg Release
+
+### To verify an `InRelease` file:
+
+    gpg  --keyring /var/lib/debmirror/trust --verify InRelease
+    gpgv --keyring /var/lib/debmirror/trustedkeys.gpg InRelease
+
+### To display the keyids for the signers of a signature file
+
+    gpg -vv file.sig
+
+
+
+# APT
+
+## List keys
+
+    apt-key --keyring /etc/apt/trusted.gpg list
+
+## Remove a key
+
+    apt-key --keyring /etc/apt/trusted.gpg remove <KEYID>
+
+## To download a key from the Debian Key Server
+
+    gpg --keyserver http://keyring.debian.org/ --recv-keys <KEYID> --trustdb-name /tmp/trustdb.gpg

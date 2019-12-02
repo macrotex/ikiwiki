@@ -1,0 +1,122 @@
+[[!toc levels=3]]
+
+# Projecting Files into Existing Directories in Kubernetes Containers
+
+## Introduction
+
+One standard method of "injecting" ConfigMap items is to mount the
+ConfigMap as a volume. This either creates a brand *new* directory with
+ConfigMap items as files in this directory, or *overwrites* an existing
+directory leaving only the ConfigMap items.
+
+But what if you want the directory to contain BOTH the existing files as
+well as the ConfigMap files?
+
+We will use the `alpine` Docker container to illustrate a couple of ways
+to mount ConfigMap items as files into a directory that already exists in
+the container.
+
+Note the contents of the *existing* directory `/etc/ssl/misc` *before*
+adding any volumeMounts into it:
+
+    # file-mapping-pod.yml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: file-mapping
+    spec:
+      containers:
+        - name: test-container
+          image: alpine
+          command: [ "sleep", "10000" ]
+
+    $ k apply -f file-mapping-pod.yml
+    $ k exec file-mapping -- ls -l /etc/ssl/misc
+    total 16
+    -rwxr-xr-x    1 root     root          7598 Sep 13 05:48 CA.pl
+    lrwxrwxrwx    1 root     root             8 Oct 21 13:39 tsget -> tsget.pl
+    -rwxr-xr-x    1 root     root          6579 Sep 13 05:48 tsget.pl
+
+## Map a ConfigMap onto a file in an existing directory: only ConfigMap items remain
+
+    # file-mapping-pod.yml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: file-mapping
+    spec:
+      containers:
+        - name: test-container
+          image: alpine
+          command: [ "sleep", "10000" ]
+          volumeMounts:
+            - name: file-mapping-volume
+              mountPath: /etc/ssl/misc
+      volumes:
+        - name: file-mapping-volume
+          configMap:
+            name: file-mapping-cm
+
+    $ k delete pod file-mapping
+    $ k apply -f file-mapping-pod.yml
+    $ k exec file-mapping -- ls -l /etc/ssl/misc
+    lrwxrwxrwx    1 root     root            10 Nov 28 20:58 cm1 -> ..data/cm1
+    lrwxrwxrwx    1 root     root            10 Nov 28 20:58 cm2 -> ..data/cm2
+
+Note that all the existing files that were in the `alpine` Docker image
+are **gone** and the only files that remain are the ConfigMap files.
+
+## Map a ConfigMap onto a file in an existing directory: original directory items remain
+
+Use the `subPath` attribute.
+
+    # file-mapping-pod.yml
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: file-mapping
+    spec:
+      containers:
+        - name: test-container
+          image: alpine
+          command: [ "sleep", "10000" ]
+          volumeMounts:
+            - name: file-mapping-volume
+              mountPath: /etc/ssl/misc/cm1.txt
+              subPath: cm1
+      volumes:
+        - name: file-mapping-volume
+          configMap:
+            name: file-mapping-cm
+
+    $ k delete pod file-mapping
+    $ k apply -f file-mapping-pod.yml
+    $ k exec file-mapping -- ls -l /etc/ssl/misc
+    total 20
+    -rwxr-xr-x    1 root     root          7598 Sep 13 05:48 CA.pl
+    -rw-r--r--    1 root     root          2114 Nov 28 21:19 cm1.txt
+    lrwxrwxrwx    1 root     root             8 Oct 21 13:39 tsget -> tsget.pl
+    -rwxr-xr-x    1 root     root          6579 Sep 13 05:48 tsget.pl
+
+Note that the original files from the `alpine` Docker container **remain**
+and the additional file `cm1.txt` from the ConfigMap is **added**.
+
+## How to reproduce the above results
+
+1. Install `jq` (JSON query utility).
+
+1. Create a `file-mapping` Kubernetes namespace and set it as the default:
+
+        $ k apply -f namespace.yml
+        $ k describe ns file-mapping
+        $ CURRENT_CONTEXT=`kubectl config -o=json view | jq -r '."current-context"'`
+        $ k config set-context $CURRENT_CONTEXT --namespace=file-mapping
+        $ k config -o=json view | jq ".contexts[]|select(.name==\"$CURRENT_CONTEXT\")"
+
+1. Create some configmap items:
+
+        $ ls /etc > /tmp/cm1.txt
+        $ ls /bin > /tmp/cm2.txt
+        $ k create cm file-mapping-cm --from-file=cm1=/tmp/cm1.txt --from-file=cm2=/tmp/cm2.txt
+        $ k get cm file-mapping-cm -o=json | jq '.data|keys'
+

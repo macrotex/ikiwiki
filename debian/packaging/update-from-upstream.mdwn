@@ -1,0 +1,68 @@
+[[!toc levels=3]]
+
+# Updating a Debian package with new upstream source
+
+## Introduction
+
+Here we describe how to take an existing Debian package and
+update it with new upstream source.
+
+## Assumptions
+
+We make these assumptions:
+
+1. The Debian package already exists in the official Debian repository.
+
+1. You have the tools installed necessary to run `gbp buildpackage`.
+
+1. The new upstream sources do *not* interfere with any Debian patches in
+the existing Debian package. If this is not true, you will need to do some
+extra work; see ??? for how to handle this case.
+
+## Procedure
+
+1.  Download the most recent release from the upstream source. This should
+be a file in `tar.gz` format (a "tarball").
+
+1. Get the name of the source package. This is *not* always the same as
+the name of the binary package. To find the name of the source you can
+search for the package at the [Debian packages
+site](https://www.debian.org/distrib/packages).
+
+1. Download the Debian package
+
+        $ apt-get source -t stable -d <source-package-name>
+
+1. Extract the files
+
+        $ gbp import-dsc *.dsc
+
+1. Change into the source directory
+
+        $ cd <source-package-name>
+
+1. You should see three branches: `master`, `upstream`, and
+`pristine-tar`. The `upstream` branch is the files from the software
+vendor. The `master` branch is the same as `master` except it contains an
+extra directory: the `debian/` directory. To see that the two branches
+only differ by the `debian/` dirctory run `git diff --name-only
+master..upstream`.
+
+1. Import the most recent release. You will need to know the upstream
+release number.
+
+        $ gbp import-orig /path/to/most/recent/release/tarball
+
+1. To see the changes this import made, do a `git log -p`.
+
+1. Update `debian/changelog`:
+
+        $ gbp dch --release
+        $ git commit -a -m "new release"
+
+1. Note that you cannot run "gbp buildpackage" until you have updated the
+changelog to the new version. Build:
+
+        $ git checkout master
+        $ gbp buildpackage
+
