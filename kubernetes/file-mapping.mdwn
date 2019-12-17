@@ -16,6 +16,8 @@ We will use the `alpine` Docker container to illustrate a couple of ways
 to mount ConfigMap items as files into a directory that already exists in
 the container.
 
+Note: we use the abbreviation `k` in place of `kubectl`.
+
 Note the contents of the *existing* directory `/etc/ssl/misc` *before*
 adding any volumeMounts into it:
 
