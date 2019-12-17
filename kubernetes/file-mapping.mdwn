@@ -68,6 +68,14 @@ adding any volumeMounts into it:
 Note that all the existing files that were in the `alpine` Docker image
 are **gone** and the only files that remain are the ConfigMap files.
 
+If you describe the pod you will see how the mapping works:
+
+    $ k describe pod file-mapping
+    ...
+    Mounts:
+      /etc/ssl/misc from file-mapping-volume (rw)
+    ...
+
 ## Map a ConfigMap onto a file in an existing directory: original directory items remain
 
 Use the `subPath` attribute.
@@ -86,6 +94,9 @@ Use the `subPath` attribute.
             - name: file-mapping-volume
               mountPath: /etc/ssl/misc/cm1.txt
               subPath: cm1
+            - name: file-mapping-volume
+              mountPath: /etc/ssl/misc/cm2.txt
+              subPath: cm2
       volumes:
         - name: file-mapping-volume
           configMap:
@@ -94,14 +105,24 @@ Use the `subPath` attribute.
     $ k delete pod file-mapping
     $ k apply -f file-mapping-pod.yml
     $ k exec file-mapping -- ls -l /etc/ssl/misc
-    total 20
+    total 36
     -rwxr-xr-x    1 root     root          7598 Sep 13 05:48 CA.pl
-    -rw-r--r--    1 root     root          2114 Nov 28 21:19 cm1.txt
+    -rw-r--r--    1 root     root          2114 Dec  2 17:35 cm1.txt
+    -rw-r--r--    1 root     root         15118 Dec  2 17:35 cm2.txt
     lrwxrwxrwx    1 root     root             8 Oct 21 13:39 tsget -> tsget.pl
     -rwxr-xr-x    1 root     root          6579 Sep 13 05:48 tsget.pl
 
 Note that the original files from the `alpine` Docker container **remain**
-and the additional file `cm1.txt` from the ConfigMap is **added**.
+and the additional files `cm1.txt` and `cm2.txt` from the ConfigMap are **added**.
+
+If you describe the pod you will see how the mapping works:
+
+    $ k describe pod file-mapping
+    ...
+    Mounts:
+      /etc/ssl/misc/cm1.txt from file-mapping-volume (rw,path="cm1")
+      /etc/ssl/misc/cm2.txt from file-mapping-volume (rw,path="cm2")
+    ...
 
 ## How to reproduce the above results
 

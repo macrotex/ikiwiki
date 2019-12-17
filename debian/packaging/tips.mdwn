@@ -1,0 +1,11 @@
+# Debian Packaging Tips
+
+* For non-native packages, if you are attempting to upload a Debian
+package to a repository and the `.orig` tarball is not already uploaded,
+you will need to build the package so that it includes this tarball. To
+build and include the `.orig` tar-ball, use the
+`-sa` option. This option is passed to `dpkg-source`:
+
+        $ dkgp-buildpackage -us -uc -sa
+               or
+        $ gbp buildpackage -sa
