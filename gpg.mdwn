@@ -111,11 +111,19 @@ trusted public keys.
 
 # APT
 
-## List keys
+In recent versions of Debian trusted APT repository keys can be in two
+places: (1) the file `/etc/apt/trusted.gpg` and (2) as files in
+`/etc/apt/trusted.gpg.d`.
 
-    apt-key --keyring /etc/apt/trusted.gpg list
+## List all keys
 
-## Remove a key
+    apt-key list
+
+## List keys only in the trusted.gpg file
+
+    gpg --import-options show-only --import /etc/apt/trusted.gpg
+
+## Remove a key from the trusted.gpg file
 
     apt-key --keyring /etc/apt/trusted.gpg remove <KEYID>
 
