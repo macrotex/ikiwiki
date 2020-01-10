@@ -19,7 +19,7 @@
     gpg --keyid-format 0xlong file.gpg
 
     # GPG version 2.x
-    ????
+    gpg --import-options show-only --import file.gpg
 
 ## Delete a key-pair
 
