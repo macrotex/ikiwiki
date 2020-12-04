@@ -126,7 +126,7 @@ If you describe the pod you will see how the mapping works:
 
 ## How to reproduce the above results
 
-1. Install `jq` (JSON query utility).
+1. Install [`jq`](https://stedolan.github.io/jq/) (JSON query utility).
 
 1. Create a `file-mapping` Kubernetes namespace and set it as the default:
 
